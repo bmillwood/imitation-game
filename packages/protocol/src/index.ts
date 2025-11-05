@@ -1,1 +1,2 @@
-export * as Protocol from './messages.js';
+export * as Message from './messages.js';
+export * as Builder from './builders.js';

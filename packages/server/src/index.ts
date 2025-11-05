@@ -1,4 +1,4 @@
-import { Protocol } from '@chat/protocol';
+import { Builder, Message } from '@chat/protocol';
 import { Server, ServerWebSocket } from 'bun';
 
 const PORT = 3000;
@@ -29,27 +29,30 @@ const server = Bun.serve<WSData>({
     },
 
     message(ws: ServerWebSocket<WSData>, message: string | Buffer) {
+      const reply = (msg: Message.FromServer): void => {
+        ws.send(JSON.stringify(msg));
+      };
       try {
         const data = JSON.parse(message.toString());
-        const parsed = Protocol.FromClient.parse(data);
+        const parsed = Message.FromClient.parse(data);
 
         console.log('Received:', parsed);
 
         // Handle different message types
         if (parsed.type === 'ping') {
-          const pong: Protocol.Pong = {
+          const pong: Message.Pong = Builder.base({
             type: 'pong',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
             payload: {
               originalId: parsed.id,
             },
-          };
-          ws.send(JSON.stringify(pong));
+          });
+          reply(pong);
         }
       } catch (err) {
         console.error('Invalid message:', err);
-        ws.send(JSON.stringify({ error: 'Invalid message format' }));
+        reply(Builder.base({
+          type: "protocol-error", error: 'Invalid message format'
+        }));
       }
     },
 

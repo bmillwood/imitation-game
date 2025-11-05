@@ -1,9 +1,14 @@
 import { z } from 'zod';
 
 // Base message envelope
-const Base = z.object({
+export const Base = z.object({
     id: z.string().uuid(),
     createdAt: z.string().datetime(),
+});
+
+export const ProtocolError = Base.extend({
+    type: z.literal("protocol-error"),
+    error: z.string(),
 });
 
 // Specific message types
@@ -33,12 +38,14 @@ export const NameError = Base.extend({
 });
 
 export const FromClient = z.discriminatedUnion('type', [
+    ProtocolError,
     Ping,
     Pong,
     NameRequest,
 ]);
 
 export const FromServer = z.discriminatedUnion('type', [
+    ProtocolError,
     Ping,
     Pong,
     NameAccept,
@@ -46,6 +53,7 @@ export const FromServer = z.discriminatedUnion('type', [
 ]);
 
 // Export TypeScript types
+export type Base = z.infer<typeof Base>;
 export type Ping = z.infer<typeof Ping>;
 export type Pong = z.infer<typeof Pong>;
 export type FromClient = z.infer<typeof FromClient>;

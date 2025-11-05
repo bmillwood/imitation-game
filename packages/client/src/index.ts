@@ -1,4 +1,4 @@
-import { Protocol } from '@chat/protocol';
+import { Builder, Message } from '@chat/protocol';
 
 const WS_URL = 'ws://localhost:3000/ws';
 
@@ -15,7 +15,7 @@ function connect() {
   ws.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      const message = Protocol.FromServer.parse(data);
+      const message = Message.FromServer.parse(data);
       console.log('Received:', message);
 
       const log = document.getElementById('log')!;
@@ -36,15 +36,9 @@ function connect() {
   };
 }
 
-function sendPing() {
-  const ping: Protocol.Ping = {
-    type: 'ping',
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-  };
-
-  ws.send(JSON.stringify(ping));
-  console.log('Sent:', ping);
+function send(msg: Message.FromClient) {
+  ws.send(JSON.stringify(msg));
+  console.log('Sent:', msg);
 }
 
 function updateStatus(status: string) {
@@ -55,5 +49,5 @@ function updateStatus(status: string) {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('connect')!.addEventListener('click', connect);
-  document.getElementById('ping')!.addEventListener('click', sendPing);
+  document.getElementById('ping')!.addEventListener('click', () => send(Builder.base({ type: "ping" })));
 });
