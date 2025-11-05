@@ -52,7 +52,7 @@ const server = Bun.serve<WSData>({
         console.error("Invalid message:", err);
         reply(
           Builder.base({
-            type: "protocol-error",
+            type: "protocolError",
             error: "Invalid message format",
           }),
         );

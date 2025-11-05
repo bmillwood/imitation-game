@@ -7,7 +7,7 @@ export const Base = z.object({
 });
 
 export const ProtocolError = Base.extend({
-  type: z.literal("protocol-error"),
+  type: z.literal("protocolError"),
   error: z.string(),
 });
 
@@ -24,16 +24,16 @@ export const Pong = Base.extend({
 });
 
 export const NameRequest = Base.extend({
-  type: z.literal("set-name"),
+  type: z.literal("setName"),
   name: z.string(),
 });
 
 export const NameAccept = Base.extend({
-  type: z.literal("name-accept"),
+  type: z.literal("nameAccept"),
 });
 
 export const NameError = Base.extend({
-  type: z.literal("name-error"),
+  type: z.literal("nameError"),
   error: z.string(),
 });
 
