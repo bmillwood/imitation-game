@@ -1,5 +1,5 @@
 import { Message, PongMessage } from '@chat/protocol';
-import { ServerWebSocket } from 'bun';
+import { Server, ServerWebSocket } from 'bun';
 
 const PORT = 3000;
 
@@ -8,7 +8,7 @@ type WSData = { id: string };
 const server = Bun.serve<WSData>({
   port: PORT,
 
-  fetch(req, server) {
+  fetch(req: Request, server: Server<WSData>): Response | undefined {
     const url = new URL(req.url);
 
     // Upgrade WebSocket connections
@@ -28,9 +28,9 @@ const server = Bun.serve<WSData>({
       console.log(`Client connected: ${ws.data.id}`);
     },
 
-    message(ws: ServerWebSocket<WSData>, message) {
+    message(ws: ServerWebSocket<WSData>, message: string | Buffer) {
       try {
-        const data = JSON.parse(message as string);
+        const data = JSON.parse(message.toString());
         const parsed = Message.parse(data);
 
         console.log('Received:', parsed);
