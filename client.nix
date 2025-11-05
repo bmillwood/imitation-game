@@ -4,18 +4,47 @@
 
 let
   pkgs = import nixpkgs config;
+  inherit (pkgs) lib stdenvNoCC;
 in
-pkgs.stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "imitation-game-client";
   src = ./.;
   nativeBuildInputs = [
     pkgs.bun
     pkgs.nodejs_24
   ];
+  bunDeps = stdenvNoCC.mkDerivation {
+    name = "imitation-game-client-deps";
+    src = ./.;
+    nativeBuildInputs = [
+      pkgs.bun
+      pkgs.nodejs_24
+    ];
+    buildPhase = ''
+      mkdir bun-cache
+      bun install --frozen-lockfile --cache-dir=bun-cache
+      while read -r -d $'\0' f; do
+        # relativize symlinks
+        target=$(readlink -f "$f")
+        [[ "$target" == /build/* ]] || continue
+        ln -nsrf "$target" "$f"
+      done < <(find bun-cache -type l -print0)
+    '';
+    installPhase = ''
+      cp -r bun-cache $out/
+    '';
+    dontPatchShebangs = true;
+    outputHash = "sha256-Zcf/kVP8m0Ina5Ky09SJeKyCF1IJpnn7HE7OABt8iic=";
+    outputHashMode = "nar";
+  };
   buildPhase = ''
-    bun install
+    export BUN_TMPDIR=$(mktemp -d)
+    export BUN_INSTALL_CACHE_DIR=$BUN_TMPDIR/bun-cache
+    mkdir $BUN_INSTALL_CACHE_DIR
+    cp -r $bunDeps/* $BUN_INSTALL_CACHE_DIR
+    bun install --frozen-lockfile
     patchShebangs node_modules/
-    bun run build:client
+    bun run build:client --base=./
   '';
   installPhase = ''
     mkdir "$out"
