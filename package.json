@@ -6,6 +6,8 @@
     "packages/*"
   ],
   "scripts": {
+    "build:client": "bun run --cwd packages/client build",
+    "start:server": "bun run --cwd packages/server src/index.ts",
     "dev:server": "bun run --cwd packages/server dev",
     "dev:client": "bun run --cwd packages/client dev",
     "format": "prettier --write .",
