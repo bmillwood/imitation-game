@@ -1,55 +1,55 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Base message envelope
 export const Base = z.object({
-    id: z.string().uuid(),
-    createdAt: z.string().datetime(),
+  id: z.string().uuid(),
+  createdAt: z.string().datetime(),
 });
 
 export const ProtocolError = Base.extend({
-    type: z.literal("protocol-error"),
-    error: z.string(),
+  type: z.literal("protocol-error"),
+  error: z.string(),
 });
 
 // Specific message types
 export const Ping = Base.extend({
-    type: z.literal('ping'),
+  type: z.literal("ping"),
 });
 
 export const Pong = Base.extend({
-    type: z.literal('pong'),
-    payload: z.object({
-        originalId: z.string().uuid(),
-    }),
+  type: z.literal("pong"),
+  payload: z.object({
+    originalId: z.string().uuid(),
+  }),
 });
 
 export const NameRequest = Base.extend({
-    type: z.literal('set-name'),
-    name: z.string(),
+  type: z.literal("set-name"),
+  name: z.string(),
 });
 
 export const NameAccept = Base.extend({
-    type: z.literal('name-accept'),
+  type: z.literal("name-accept"),
 });
 
 export const NameError = Base.extend({
-    type: z.literal('name-error'),
-    error: z.string(),
+  type: z.literal("name-error"),
+  error: z.string(),
 });
 
-export const FromClient = z.discriminatedUnion('type', [
-    ProtocolError,
-    Ping,
-    Pong,
-    NameRequest,
+export const FromClient = z.discriminatedUnion("type", [
+  ProtocolError,
+  Ping,
+  Pong,
+  NameRequest,
 ]);
 
-export const FromServer = z.discriminatedUnion('type', [
-    ProtocolError,
-    Ping,
-    Pong,
-    NameAccept,
-    NameError,
+export const FromServer = z.discriminatedUnion("type", [
+  ProtocolError,
+  Ping,
+  Pong,
+  NameAccept,
+  NameError,
 ]);
 
 // Export TypeScript types

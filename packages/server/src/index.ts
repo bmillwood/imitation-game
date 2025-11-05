@@ -1,5 +1,5 @@
-import { Builder, Message } from '@chat/protocol';
-import { Server, ServerWebSocket } from 'bun';
+import { Builder, Message } from "@chat/protocol";
+import { Server, ServerWebSocket } from "bun";
 
 const PORT = 3000;
 
@@ -12,15 +12,15 @@ const server = Bun.serve<WSData>({
     const url = new URL(req.url);
 
     // Upgrade WebSocket connections
-    if (url.pathname === '/ws') {
+    if (url.pathname === "/ws") {
       const upgraded = server.upgrade(req, {
         data: { id: crypto.randomUUID() },
       });
       if (upgraded) return;
-      return new Response('WebSocket upgrade failed', { status: 500 });
+      return new Response("WebSocket upgrade failed", { status: 500 });
     }
 
-    return new Response('Chat server running');
+    return new Response("Chat server running");
   },
 
   websocket: {
@@ -36,12 +36,12 @@ const server = Bun.serve<WSData>({
         const data = JSON.parse(message.toString());
         const parsed = Message.FromClient.parse(data);
 
-        console.log('Received:', parsed);
+        console.log("Received:", parsed);
 
         // Handle different message types
-        if (parsed.type === 'ping') {
+        if (parsed.type === "ping") {
           const pong: Message.Pong = Builder.base({
-            type: 'pong',
+            type: "pong",
             payload: {
               originalId: parsed.id,
             },
@@ -49,10 +49,13 @@ const server = Bun.serve<WSData>({
           reply(pong);
         }
       } catch (err) {
-        console.error('Invalid message:', err);
-        reply(Builder.base({
-          type: "protocol-error", error: 'Invalid message format'
-        }));
+        console.error("Invalid message:", err);
+        reply(
+          Builder.base({
+            type: "protocol-error",
+            error: "Invalid message format",
+          }),
+        );
       }
     },
 
