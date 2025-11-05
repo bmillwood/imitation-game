@@ -1,7 +1,7 @@
 import { Builder, Message } from "@chat/protocol";
 import { Server, ServerWebSocket } from "bun";
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 type WSData = { id: string };
 
