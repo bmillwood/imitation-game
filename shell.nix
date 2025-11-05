@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = [ pkgs.bun ];
-  
+
   shellHook = ''
     echo "Chat app dev environment"
     echo "Bun version: $(bun --version)"
