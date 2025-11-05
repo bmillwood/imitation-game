@@ -1,4 +1,4 @@
-import { Message, PingMessage } from '@chat/protocol';
+import { Protocol } from '@chat/protocol';
 
 const WS_URL = 'ws://localhost:3000/ws';
 
@@ -15,7 +15,7 @@ function connect() {
   ws.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      const message = Message.parse(data);
+      const message = Protocol.FromServer.parse(data);
       console.log('Received:', message);
 
       const log = document.getElementById('log')!;
@@ -37,10 +37,10 @@ function connect() {
 }
 
 function sendPing() {
-  const ping: PingMessage = {
+  const ping: Protocol.Ping = {
     type: 'ping',
     id: crypto.randomUUID(),
-    timestamp: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
   };
 
   ws.send(JSON.stringify(ping));

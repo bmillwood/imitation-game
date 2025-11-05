@@ -1,1 +1,1 @@
-export * from './messages.js';
+export * as Protocol from './messages.js';

@@ -1,4 +1,4 @@
-import { Message, PongMessage } from '@chat/protocol';
+import { Protocol } from '@chat/protocol';
 import { Server, ServerWebSocket } from 'bun';
 
 const PORT = 3000;
@@ -31,16 +31,16 @@ const server = Bun.serve<WSData>({
     message(ws: ServerWebSocket<WSData>, message: string | Buffer) {
       try {
         const data = JSON.parse(message.toString());
-        const parsed = Message.parse(data);
+        const parsed = Protocol.FromClient.parse(data);
 
         console.log('Received:', parsed);
 
         // Handle different message types
         if (parsed.type === 'ping') {
-          const pong: PongMessage = {
+          const pong: Protocol.Pong = {
             type: 'pong',
             id: crypto.randomUUID(),
-            timestamp: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
             payload: {
               originalId: parsed.id,
             },
