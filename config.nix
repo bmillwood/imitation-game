@@ -37,7 +37,9 @@ in
       script = ''
         rm -rf cwd
         cp -r ${./.} cwd
+        chmod -R u+w cwd
         cd cwd
+        bun install --frozen-lockfile
         bun run start:server
       '';
       serviceConfig = {
@@ -53,13 +55,15 @@ in
       virtualHosts.${cfg.virtualHost} = {
         forceSSL = true;
         enableACME = true;
-        locations.${cfg.path} = {
-          root = "${clientFiles}";
-          tryFiles = "$uri /index.html =404";
+        locations."/${cfg.path}" = {
+          root = pkgs.linkFarm "imitation-root" [
+            { name = cfg.path; path = "${clientFiles}"; }
+          ];
+          tryFiles = "$uri =404";
         };
-        locations."${cfg.path}/ws" = {
-          proxyPass = "http://127.0.0.1:${builtins.toString cfg.port}";
-          recommendedProxySettings = true;
+        locations."= /${cfg.path}/ws" = {
+          proxyPass = "http://127.0.0.1:${builtins.toString cfg.port}/ws";
+          proxyWebsockets = true;
         };
       };
     };
