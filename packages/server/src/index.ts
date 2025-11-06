@@ -1,13 +1,9 @@
 import { Builder, Message } from "@chat/protocol";
 import { Server, ServerWebSocket } from "bun";
 
-const PORT = Number(process.env.PORT) || 3000;
-
 type WSData = { id: string };
 
 const server = Bun.serve<WSData>({
-  port: PORT,
-
   fetch(req: Request, server: Server<WSData>): Response | undefined {
     const url = new URL(req.url);
 
@@ -65,5 +61,5 @@ const server = Bun.serve<WSData>({
   },
 });
 
-console.log(`Server running on http://localhost:${PORT}`);
-console.log(`WebSocket endpoint: ws://localhost:${PORT}/ws`);
+console.log(`Server running on http://localhost:${server.port}`);
+console.log(`WebSocket endpoint: ws://localhost:${server.port}/ws`);
