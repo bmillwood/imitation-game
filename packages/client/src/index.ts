@@ -1,11 +1,13 @@
 import { Builder, Message } from "@chat/protocol";
 
-const WS_URL = "ws://localhost:3000/ws";
-
 let ws: WebSocket;
 
 function connect() {
-  ws = new WebSocket(WS_URL);
+  const wsUrl = new URL(window.location.href);
+  wsUrl.protocol = wsUrl.protocol.replace("http", "ws");
+  wsUrl.pathname += "/ws";
+  console.log(wsUrl.toString());
+  ws = new WebSocket(wsUrl.toString());
 
   ws.onopen = () => {
     console.log("Connected to server");
