@@ -4,5 +4,7 @@ tmux new-session \; \
      send-keys "bun run dev:client" Enter \; \
      split-window \; \
      send-keys "bun run dev:server" Enter \; \
+     split-window \; \
+     send-keys "tsc --noEmit --watch" Enter \; \
      select-layout main-vertical \; \
      select-pane -t 0

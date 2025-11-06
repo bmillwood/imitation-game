@@ -1,7 +1,10 @@
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
-  buildInputs = [ pkgs.bun ];
+  buildInputs = [
+    pkgs.bun
+    pkgs.typescript
+  ];
 
   shellHook = ''
     echo "Chat app dev environment"
