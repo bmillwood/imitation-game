@@ -1,7 +1,11 @@
 import { Builder, Message } from "@chat/protocol";
 import { Server, ServerWebSocket } from "bun";
 
-type WSData = { id: string };
+type WSData = { id: string; name: string | null };
+
+type User = {};
+
+const usersByName: Record<string, User> = {};
 
 const server = Bun.serve<WSData>({
   fetch(req: Request, server: Server<WSData>): Response | undefined {
@@ -10,7 +14,7 @@ const server = Bun.serve<WSData>({
     // Upgrade WebSocket connections
     if (url.pathname === "/ws") {
       const upgraded = server.upgrade(req, {
-        data: { id: crypto.randomUUID() },
+        data: { id: crypto.randomUUID(), name: null },
       });
       if (upgraded) return;
       return new Response("WebSocket upgrade failed", { status: 500 });
@@ -34,15 +38,45 @@ const server = Bun.serve<WSData>({
 
         console.log("Received:", parsed);
 
-        // Handle different message types
-        if (parsed.type === "ping") {
-          const pong: Message.Pong = Builder.base({
-            type: "pong",
-            payload: {
-              originalId: parsed.id,
-            },
-          });
-          reply(pong);
+        switch (parsed.type) {
+          case "ping":
+            const pong: Message.Pong = Builder.base({
+              type: "pong",
+              payload: {
+                originalId: parsed.id,
+              },
+            });
+            reply(pong);
+            break;
+          case "setName":
+            const oldName = ws.data.name;
+            const newName = parsed.name;
+            if (usersByName[newName]) {
+              reply(
+                Builder.base({
+                  type: "nameError",
+                  error: "Name already in use",
+                }),
+              );
+              break;
+            }
+            ws.data.name = newName;
+            if (oldName !== null) {
+              usersByName[newName] = usersByName[oldName];
+              delete usersByName[oldName];
+              console.log(`${oldName} renamed to ${newName}`);
+            } else {
+              usersByName[newName] = {};
+              console.log(`${newName} joined`);
+            }
+            reply(
+              Builder.base({
+                type: "nameAccept",
+              }),
+            );
+            break;
+          default:
+            console.log("Unhandled");
         }
       } catch (err) {
         console.error("Invalid message:", err);

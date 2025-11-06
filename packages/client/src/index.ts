@@ -2,6 +2,17 @@ import { Builder, Message } from "@chat/protocol";
 
 let ws: WebSocket;
 
+function send(msg: Message.FromClient) {
+  ws.send(JSON.stringify(msg));
+  console.log("Sent:", msg);
+}
+
+function sendName() {
+  const form = document.getElementById("settings") as HTMLFormElement;
+  const nameInput = form.elements.namedItem("name") as HTMLInputElement;
+  send(Builder.base({ type: "setName", name: nameInput.value }));
+}
+
 function connect() {
   const wsUrl = new URL(window.location.href);
   wsUrl.protocol = wsUrl.protocol.replace("http", "ws");
@@ -12,6 +23,7 @@ function connect() {
   ws.onopen = () => {
     console.log("Connected to server");
     updateStatus("Connected");
+    sendName();
   };
 
   ws.onmessage = (event) => {
@@ -38,11 +50,6 @@ function connect() {
   };
 }
 
-function send(msg: Message.FromClient) {
-  ws.send(JSON.stringify(msg));
-  console.log("Sent:", msg);
-}
-
 function updateStatus(status: string) {
   const statusEl = document.getElementById("status")!;
   statusEl.textContent = status;
@@ -54,4 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("ping")!
     .addEventListener("click", () => send(Builder.base({ type: "ping" })));
+  document.getElementById("settings")!.addEventListener("submit", (e) => {
+    e.preventDefault();
+    sendName();
+  });
 });

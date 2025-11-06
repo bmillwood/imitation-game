@@ -7,26 +7,29 @@
     <style>
       body {
         font-family: system-ui, sans-serif;
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+        max-width: 40em;
+        margin: 2em auto;
+        padding: 0 1em;
       }
       button {
-        padding: 0.5rem 1rem;
-        margin-right: 0.5rem;
+        padding: 0.5em 1em;
+        margin: 0.5em;
         cursor: pointer;
+      }
+      input#name {
+        margin: 0.5em;
       }
       #log {
         background: #f5f5f5;
-        padding: 1rem;
-        margin-top: 1rem;
+        padding: 1em;
+        margin-top: 1em;
         white-space: pre-wrap;
         font-family: monospace;
-        max-height: 400px;
+        max-height: 20em;
         overflow-y: auto;
       }
       .status {
-        margin: 1rem 0;
+        margin: 1em 0;
       }
     </style>
   </head>
@@ -39,6 +42,8 @@
       <button id="connect">Connect</button>
       <button id="ping">Send Ping</button>
     </div>
+
+    <form id="settings">Name: <input type="text" name="name" /></form>
 
     <div id="log">Message log will appear here...</div>
 

@@ -23,7 +23,7 @@ export const Pong = Base.extend({
   }),
 });
 
-export const NameRequest = Base.extend({
+export const SetName = Base.extend({
   type: z.literal("setName"),
   name: z.string(),
 });
@@ -41,7 +41,7 @@ export const FromClient = z.discriminatedUnion("type", [
   ProtocolError,
   Ping,
   Pong,
-  NameRequest,
+  SetName,
 ]);
 
 export const FromServer = z.discriminatedUnion("type", [
