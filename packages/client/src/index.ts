@@ -5,7 +5,7 @@ let ws: WebSocket;
 function connect() {
   const wsUrl = new URL(window.location.href);
   wsUrl.protocol = wsUrl.protocol.replace("http", "ws");
-  wsUrl.pathname += "/ws";
+  wsUrl.pathname = wsUrl.pathname.replace(/\/[^\/]*$/, "/ws");
   console.log(wsUrl.toString());
   ws = new WebSocket(wsUrl.toString());
 
