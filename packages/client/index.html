@@ -19,13 +19,13 @@
       input#name {
         margin: 0.5em;
       }
-      #log {
+      #chat {
         background: #f5f5f5;
         padding: 1em;
         margin-top: 1em;
         white-space: pre-wrap;
         font-family: monospace;
-        max-height: 20em;
+        height: 20em;
         overflow-y: auto;
       }
       .status {
@@ -45,7 +45,9 @@
 
     <form id="settings">Name: <input type="text" name="name" /></form>
 
-    <div id="log">Message log will appear here...</div>
+    <div id="chat"></div>
+
+    <form id="setChat"><input type="text" name="chat" /><input type="submit" id="sendChat" value="Chat" /></form>
 
     <script type="module" src="/src/index.ts"></script>
   </body>

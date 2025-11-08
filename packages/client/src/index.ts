@@ -13,6 +13,51 @@ function sendName() {
   send(Builder.base({ type: "setName", name: nameInput.value }));
 }
 
+type Handler<T extends Message.ServerType> = (
+  msg: Extract<Message.FromServer, { type: T }>,
+) => void;
+
+const handlers: { [K in Message.ServerType]: Handler<K> } = {
+  protocolError(msg: Message.ProtocolError) {
+    // shrug
+  },
+
+  ping(msg: Message.Ping) {
+    const pong: Message.Pong = Builder.base({
+      type: "pong",
+      payload: {
+        originalId: msg.id,
+      },
+    });
+    send(pong);
+  },
+
+  pong(msg: Message.Pong) {
+    // shrug
+  },
+
+  nameAccept(msg: Message.NameAccept) {
+    // shrug
+  },
+
+  nameError(msg: Message.NameError) {
+    // shrug
+  },
+
+  chat(msg: Message.Chat) {
+    const chat = document.getElementById("chat");
+    chat!.appendChild(document.createTextNode(`\n${msg.name}: ${msg.chat}`));
+  },
+};
+
+function handle<T extends Message.ServerType>(
+  ws: WebSocket,
+  msg: Extract<Message.FromServer, { type: T }>,
+): void {
+  const handler: Handler<T> = handlers[msg.type];
+  return handler(msg);
+}
+
 function connect() {
   const wsUrl = new URL(window.location.href);
   wsUrl.protocol = wsUrl.protocol.replace("http", "ws");
@@ -31,9 +76,7 @@ function connect() {
       const data = JSON.parse(event.data);
       const message = Message.FromServer.parse(data);
       console.log("Received:", message);
-
-      const log = document.getElementById("log")!;
-      log.textContent += `\n${message.type}: ${JSON.stringify(message, null, 2)}`;
+      handle(ws, message);
     } catch (err) {
       console.error("Invalid message:", err);
     }
@@ -64,5 +107,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("settings")!.addEventListener("submit", (e) => {
     e.preventDefault();
     sendName();
+  });
+  const form = document.getElementById("setChat") as HTMLFormElement;
+  const chatInput = form.elements.namedItem("chat") as HTMLInputElement;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    send(Builder.base({ type: "sendChat", chat: chatInput.value }));
+    chatInput.value = "";
   });
 });
