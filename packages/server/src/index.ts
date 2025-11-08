@@ -55,6 +55,7 @@ const server = Bun.serve<WSData>({
               reply(
                 Builder.base({
                   type: "nameError",
+                  name: newName,
                   error: "Name already in use",
                 }),
               );
@@ -72,6 +73,7 @@ const server = Bun.serve<WSData>({
             reply(
               Builder.base({
                 type: "nameAccept",
+                name: newName,
               }),
             );
             break;
@@ -90,6 +92,9 @@ const server = Bun.serve<WSData>({
     },
 
     close(ws: ServerWebSocket<WSData>) {
+      if (ws.data.name !== null) {
+        delete usersByName[ws.data.name];
+      }
       console.log(`Client disconnected: ${ws.data.id}`);
     },
   },

@@ -30,10 +30,12 @@ export const SetName = Base.extend({
 
 export const NameAccept = Base.extend({
   type: z.literal("nameAccept"),
+  name: z.string(),
 });
 
 export const NameError = Base.extend({
   type: z.literal("nameError"),
+  name: z.string(),
   error: z.string(),
 });
 
