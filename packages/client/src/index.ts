@@ -1,6 +1,7 @@
 import { Builder, Message } from "@chat/protocol";
 
 let ws: WebSocket;
+let predictId: string | null = null;
 
 function send(msg: Message.FromClient) {
   ws.send(JSON.stringify(msg));
@@ -47,6 +48,20 @@ const handlers: { [K in Message.ServerType]: Handler<K> } = {
   chat(msg: Message.Chat) {
     const chat = document.getElementById("chat");
     chat!.appendChild(document.createTextNode(`\n${msg.name}: ${msg.chat}`));
+  },
+
+  predict(msg: Message.Predict) {
+    const predict = document.getElementById("predict");
+    if(!predict) {
+      return;
+    }
+    const tokenNode = document.createTextNode(msg.token);
+    if(predictId === msg.after) {
+      predict.appendChild(tokenNode);
+    } else {
+      predict.replaceChildren(tokenNode);
+      predictId = msg.after;
+    }
   },
 };
 

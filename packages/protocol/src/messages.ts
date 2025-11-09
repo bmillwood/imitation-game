@@ -50,12 +50,19 @@ export const Chat = Base.extend({
   chat: z.string(),
 });
 
+export const Predict = Base.extend({
+  type: z.literal("predict"),
+  after: z.string().uuid(),
+  token: z.string(),
+});
+
 export const FromClient = z.discriminatedUnion("type", [
   ProtocolError,
   Ping,
   Pong,
   SetName,
   SendChat,
+  Predict,
 ]);
 export type ClientType = FromClient["type"];
 
@@ -66,6 +73,7 @@ export const FromServer = z.discriminatedUnion("type", [
   NameAccept,
   NameError,
   Chat,
+  Predict,
 ]);
 export type ServerType = FromServer["type"];
 
@@ -80,4 +88,5 @@ export type FromClient = z.infer<typeof FromClient>;
 export type NameAccept = z.infer<typeof NameAccept>;
 export type NameError = z.infer<typeof NameError>;
 export type Chat = z.infer<typeof Chat>;
+export type Predict = z.infer<typeof Predict>;
 export type FromServer = z.infer<typeof FromServer>;

@@ -7,3 +7,7 @@ export function base<T extends object>(fields: T): T & Base {
     createdAt: new Date().toISOString(),
   };
 }
+
+export function restamp<T extends Base>(msg: T): T {
+  return base(msg);
+}
