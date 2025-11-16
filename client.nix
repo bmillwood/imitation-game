@@ -29,6 +29,7 @@ stdenvNoCC.mkDerivation {
         [[ "$target" == /build/* ]] || continue
         ln -nsrf "$target" "$f"
       done < <(find bun-cache -type l -print0)
+      rmdir bun-cache/.tmp || true # I don't know why this exists sometimes
     '';
     installPhase = ''
       cp -r bun-cache $out/
