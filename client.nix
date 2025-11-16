@@ -44,6 +44,8 @@ stdenvNoCC.mkDerivation {
     mkdir $BUN_INSTALL_CACHE_DIR
     cp -r $bunDeps/* $BUN_INSTALL_CACHE_DIR
     bun install --frozen-lockfile
+    # work around https://github.com/NixOS/nixpkgs/issues/462298
+    chmod -R go-w node_modules
     patchShebangs node_modules/
     bun run build:client --base=./
   '';
