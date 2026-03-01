@@ -4,9 +4,8 @@ import { Server, ServerWebSocket } from "bun";
 type WSData = { id: string; name: string | null };
 type WS = ServerWebSocket<WSData>;
 
-type User = { ws: WS };
-
-const usersByName: Record<string, User> = {};
+const usersById: Record<string, WS> = {};
+const usersByName: Record<string, WS> = {};
 
 type Message = { name: string; chat: string };
 
@@ -43,6 +42,16 @@ const handlers: { [K in Message.ClientType]: Handler<K> } = {
   setName(ws: WS, msg: Message.SetName) {
     const oldName = ws.data.name;
     const newName = msg.name;
+    if (oldName == newName) {
+      reply(
+        ws,
+        Builder.base({
+          type: "nameAccept",
+          name: newName,
+        }),
+      );
+      return;
+    }
     if (usersByName[newName]) {
       reply(
         ws,
@@ -55,12 +64,11 @@ const handlers: { [K in Message.ClientType]: Handler<K> } = {
       return;
     }
     ws.data.name = newName;
+    usersByName[newName] = ws;
     if (oldName !== null) {
-      usersByName[newName] = usersByName[oldName];
       delete usersByName[oldName];
       console.log(`${oldName} renamed to ${newName}`);
     } else {
-      usersByName[newName] = { ws };
       console.log(`${newName} joined`);
     }
     reply(
@@ -83,9 +91,9 @@ const handlers: { [K in Message.ClientType]: Handler<K> } = {
       );
     } else {
       messages.push({ name: ws.data.name, chat: msg.chat });
-      for (const other in usersByName) {
+      for (const other in usersById) {
         reply(
-          usersByName[other].ws,
+          usersById[other],
           Builder.base({
             type: "chat",
             name: ws.data.name,
@@ -97,8 +105,8 @@ const handlers: { [K in Message.ClientType]: Handler<K> } = {
   },
 
   predict(ws: WS, msg: Message.Predict) {
-    for (const other in usersByName) {
-      reply(usersByName[other].ws, Builder.restamp(msg));
+    for (const other in usersById) {
+      reply(usersById[other], Builder.restamp(msg));
     }
   },
 };
@@ -130,6 +138,7 @@ const server = Bun.serve<WSData>({
   websocket: {
     open(ws: ServerWebSocket<WSData>) {
       console.log(`Client connected: ${ws.data.id}`);
+      usersById[ws.data.id] = ws;
     },
 
     message(ws: ServerWebSocket<WSData>, message: string | Buffer) {
@@ -153,10 +162,11 @@ const server = Bun.serve<WSData>({
     },
 
     close(ws: ServerWebSocket<WSData>) {
+      delete usersById[ws.data.id];
       if (ws.data.name !== null) {
         delete usersByName[ws.data.name];
       }
-      console.log(`Client disconnected: ${ws.data.id}`);
+      console.log(`Client disconnected: ${ws.data.name} ${ws.data.id}`);
     },
   },
 });
