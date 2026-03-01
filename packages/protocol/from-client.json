@@ -1,0 +1,93 @@
+{
+  "$ref": "#/definitions/FromClient",
+  "definitions": {
+    "FromClient": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "type": { "type": "string", "const": "protocolError" },
+            "error": { "type": "string" }
+          },
+          "required": ["id", "createdAt", "type", "error"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/definitions/FromClient/anyOf/0/properties/id" },
+            "createdAt": {
+              "$ref": "#/definitions/FromClient/anyOf/0/properties/createdAt"
+            },
+            "type": { "type": "string", "const": "ping" }
+          },
+          "required": ["id", "createdAt", "type"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/definitions/FromClient/anyOf/0/properties/id" },
+            "createdAt": {
+              "$ref": "#/definitions/FromClient/anyOf/0/properties/createdAt"
+            },
+            "type": { "type": "string", "const": "pong" },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "originalId": { "type": "string", "format": "uuid" }
+              },
+              "required": ["originalId"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["id", "createdAt", "type", "payload"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/definitions/FromClient/anyOf/0/properties/id" },
+            "createdAt": {
+              "$ref": "#/definitions/FromClient/anyOf/0/properties/createdAt"
+            },
+            "type": { "type": "string", "const": "setName" },
+            "name": { "type": "string" }
+          },
+          "required": ["id", "createdAt", "type", "name"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/definitions/FromClient/anyOf/0/properties/id" },
+            "createdAt": {
+              "$ref": "#/definitions/FromClient/anyOf/0/properties/createdAt"
+            },
+            "type": { "type": "string", "const": "sendChat" },
+            "chat": { "type": "string" }
+          },
+          "required": ["id", "createdAt", "type", "chat"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/definitions/FromClient/anyOf/0/properties/id" },
+            "createdAt": {
+              "$ref": "#/definitions/FromClient/anyOf/0/properties/createdAt"
+            },
+            "type": { "type": "string", "const": "predict" },
+            "after": { "type": "string", "format": "uuid" },
+            "token": { "type": "string" }
+          },
+          "required": ["id", "createdAt", "type", "after", "token"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -35,7 +35,7 @@ stdenvNoCC.mkDerivation {
       cp -r bun-cache $out/
     '';
     dontPatchShebangs = true;
-    outputHash = "sha256-Zcf/kVP8m0Ina5Ky09SJeKyCF1IJpnn7HE7OABt8iic=";
+    outputHash = "sha256-WD44FoiRgK2d+/8McqG9BNamdzbO/8UVOdTIGYAn/+A";
     outputHashMode = "nar";
   };
   buildPhase = ''

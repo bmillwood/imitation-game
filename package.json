@@ -11,7 +11,8 @@
     "dev:server": "bun run --cwd packages/server dev",
     "dev:client": "bun run --cwd packages/client dev",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "generate-schema": "bun run --cwd packages/protocol scripts/generate-schema.ts && prettier --write packages/protocol/from-{client,server}.json"
   },
   "devDependencies": {
     "@types/bun": "^1.3.1",
