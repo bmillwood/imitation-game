@@ -1,0 +1,273 @@
+{
+  "type": "object",
+  "properties": {
+    "fromClient": {
+      "$ref": "#/definitions/FromClient"
+    },
+    "fromServer": {
+      "$ref": "#/definitions/FromServer"
+    }
+  },
+  "required": ["fromClient", "fromServer"],
+  "additionalProperties": false,
+  "definitions": {
+    "Base": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "createdAt"],
+      "additionalProperties": false
+    },
+    "Chat": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "chat"
+        },
+        "name": {
+          "type": "string"
+        },
+        "chat": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "name", "chat"],
+      "additionalProperties": false
+    },
+    "FromClient": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ProtocolError"
+        },
+        {
+          "$ref": "#/definitions/Ping"
+        },
+        {
+          "$ref": "#/definitions/Pong"
+        },
+        {
+          "$ref": "#/definitions/SetName"
+        },
+        {
+          "$ref": "#/definitions/SendChat"
+        },
+        {
+          "$ref": "#/definitions/Predict"
+        }
+      ]
+    },
+    "FromServer": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ProtocolError"
+        },
+        {
+          "$ref": "#/definitions/Ping"
+        },
+        {
+          "$ref": "#/definitions/Pong"
+        },
+        {
+          "$ref": "#/definitions/NameAccept"
+        },
+        {
+          "$ref": "#/definitions/NameError"
+        },
+        {
+          "$ref": "#/definitions/Chat"
+        },
+        {
+          "$ref": "#/definitions/Predict"
+        }
+      ]
+    },
+    "NameAccept": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "nameAccept"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "name"],
+      "additionalProperties": false
+    },
+    "NameError": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "nameError"
+        },
+        "name": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "name", "error"],
+      "additionalProperties": false
+    },
+    "Ping": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "ping"
+        }
+      },
+      "required": ["id", "createdAt", "type"],
+      "additionalProperties": false
+    },
+    "Pong": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "pong"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "originalId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": ["originalId"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["id", "createdAt", "type", "payload"],
+      "additionalProperties": false
+    },
+    "Predict": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "predict"
+        },
+        "after": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "after", "token"],
+      "additionalProperties": false
+    },
+    "ProtocolError": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "protocolError"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "error"],
+      "additionalProperties": false
+    },
+    "SendChat": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "sendChat"
+        },
+        "chat": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "chat"],
+      "additionalProperties": false
+    },
+    "SetName": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/Base/properties/id"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/Base/properties/createdAt"
+        },
+        "type": {
+          "type": "string",
+          "const": "setName"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "type", "name"],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

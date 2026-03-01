@@ -6,6 +6,13 @@ pkgs.mkShell {
     pkgs.typescript
   ];
 
+  packages = [
+    (pkgs.python3.withPackages (pypkgs: with pypkgs; [
+      datamodel-code-generator
+      websockets
+    ]))
+  ];
+
   shellHook = ''
     echo "Chat app dev environment"
     echo "Bun version: $(bun --version)"
