@@ -52,11 +52,11 @@ const handlers: { [K in Message.ServerType]: Handler<K> } = {
 
   predict(msg: Message.Predict) {
     const predict = document.getElementById("predict");
-    if(!predict) {
+    if (!predict) {
       return;
     }
     const tokenNode = document.createTextNode(msg.token);
-    if(predictId === msg.after) {
+    if (predictId === msg.after) {
       predict.appendChild(tokenNode);
     } else {
       predict.replaceChildren(tokenNode);

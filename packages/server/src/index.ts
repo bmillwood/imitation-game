@@ -98,12 +98,9 @@ const handlers: { [K in Message.ClientType]: Handler<K> } = {
 
   predict(ws: WS, msg: Message.Predict) {
     for (const other in usersByName) {
-      reply(
-        usersByName[other].ws,
-        Builder.restamp(msg),
-      );
+      reply(usersByName[other].ws, Builder.restamp(msg));
     }
-  }
+  },
 };
 
 function handle<T extends Message.ClientType>(
