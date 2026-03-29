@@ -73,6 +73,25 @@ function handle<T extends Message.ServerType>(
   return handler(msg);
 }
 
+let pingInterval: ReturnType<typeof setInterval> | null = null;
+const PING_INTERVAL_MS = 30_000;
+
+function startPingLoop() {
+  stopPingLoop();
+  pingInterval = setInterval(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      send(Builder.base({ type: "ping" }));
+    }
+  }, PING_INTERVAL_MS);
+}
+
+function stopPingLoop() {
+  if (pingInterval !== null) {
+    clearInterval(pingInterval);
+    pingInterval = null;
+  }
+}
+
 function connect() {
   const wsUrl = new URL(window.location.href);
   wsUrl.protocol = wsUrl.protocol.replace("http", "ws");
@@ -84,6 +103,7 @@ function connect() {
     console.log("Connected to server");
     updateStatus("Connected");
     sendName();
+    startPingLoop();
   };
 
   ws.onmessage = (event) => {
@@ -100,11 +120,13 @@ function connect() {
   ws.onerror = (error) => {
     console.error("WebSocket error:", error);
     updateStatus("Error");
+    stopPingLoop();
   };
 
   ws.onclose = () => {
     console.log("Disconnected from server");
     updateStatus("Disconnected");
+    stopPingLoop();
   };
 }
 
