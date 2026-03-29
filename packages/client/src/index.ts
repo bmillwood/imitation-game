@@ -101,7 +101,7 @@ function connect() {
 
   ws.onopen = () => {
     console.log("Connected to server");
-    updateStatus("Connected");
+    updateConnectButton({ disabled: true, text: "Connected" });
     sendName();
     startPingLoop();
   };
@@ -119,20 +119,21 @@ function connect() {
 
   ws.onerror = (error) => {
     console.error("WebSocket error:", error);
-    updateStatus("Error");
+    updateConnectButton({ disabled: false, text: "Reconnect" });
     stopPingLoop();
   };
 
   ws.onclose = () => {
     console.log("Disconnected from server");
-    updateStatus("Disconnected");
+    updateConnectButton({ disabled: false, text: "Reconnect" });
     stopPingLoop();
   };
 }
 
-function updateStatus(status: string) {
-  const statusEl = document.getElementById("status")!;
-  statusEl.textContent = status;
+function updateConnectButton(args : { disabled: boolean, text: string }) {
+  const el = document.getElementById("connect")! as HTMLButtonElement;
+  el.disabled = args.disabled;
+  el.textContent = args.text;
 }
 
 // Initialize
