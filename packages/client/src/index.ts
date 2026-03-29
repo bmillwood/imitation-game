@@ -11,7 +11,8 @@ function send(msg: Message.FromClient) {
 function sendName() {
   const form = document.getElementById("settings") as HTMLFormElement;
   const nameInput = form.elements.namedItem("name") as HTMLInputElement;
-  send(Builder.base({ type: "setName", name: nameInput.value }));
+  const name = nameInput.value !== "" ? nameInput.value : "anonymous";
+  send(Builder.base({ type: "setName", name }));
 }
 
 type Handler<T extends Message.ServerType> = (
@@ -139,9 +140,6 @@ function updateConnectButton(args : { disabled: boolean, text: string }) {
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("connect")!.addEventListener("click", connect);
-  document
-    .getElementById("ping")!
-    .addEventListener("click", () => send(Builder.base({ type: "ping" })));
   document.getElementById("settings")!.addEventListener("submit", (e) => {
     e.preventDefault();
     sendName();
